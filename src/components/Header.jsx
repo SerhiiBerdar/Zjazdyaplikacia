@@ -1,43 +1,91 @@
 export default function Header({ recordCount, onOpenMenu }) {
+  const hasData = recordCount > 0
+
   return (
     <header style={{
-      background: 'var(--panel)', borderBottom: '1px solid var(--border)',
-      padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 12,
+      background: 'rgba(10,10,15,0.82)',
+      backdropFilter: 'blur(24px)',
+      WebkitBackdropFilter: 'blur(24px)',
+      borderBottom: '1px solid var(--border)',
+      padding: '0 24px',
+      height: 62,
+      display: 'flex', alignItems: 'center', gap: 14,
       position: 'sticky', top: 0, zIndex: 100,
     }}>
+
+      {/* Logo */}
       <div style={{
-        width: 30, height: 30,
-        background: 'linear-gradient(135deg,#58a6ff,#d2a8ff)',
-        borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15,
+        width: 36, height: 36, flexShrink: 0,
+        background: 'var(--accent)',
+        borderRadius: 10,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 18,
+        boxShadow: '0 0 22px var(--accent-glow)',
       }}>🚉</div>
+
+      {/* Title */}
       <div>
-        <div style={{ fontSize: 15, fontWeight: 600 }}>Analýza Vytaženosti Zjazdov</div>
-        <div style={{ fontSize: 11, color: 'var(--text2)', marginTop: 1 }}>Pohyb KLT prepraviek cez stanice v čase</div>
+        <div style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: 21, fontWeight: 800,
+          letterSpacing: '0.06em',
+          textTransform: 'uppercase',
+          color: 'var(--text)',
+          lineHeight: 1.1,
+        }}>
+          Analýza Vytaženosti Zjazdov
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 1, letterSpacing: '0.02em' }}>
+          Pohyb KLT prepraviek cez stanice v čase
+        </div>
       </div>
+
+      {/* Spacer */}
+      <div style={{ marginLeft: 'auto' }} />
+
+      {/* Record count badge */}
       <div style={{
-        marginLeft: 'auto',
-        background: 'rgba(88,166,255,.12)', border: '1px solid rgba(88,166,255,.3)',
-        color: 'var(--accent)', fontSize: 11, fontWeight: 500, padding: '3px 10px', borderRadius: 20,
+        background: hasData ? 'var(--accent-dim)' : 'rgba(255,255,255,0.04)',
+        border: `1px solid ${hasData ? 'rgba(200,255,0,0.3)' : 'var(--border)'}`,
+        color: hasData ? 'var(--accent)' : 'var(--text2)',
+        fontSize: 11, fontWeight: 600,
+        padding: '5px 14px', borderRadius: 20,
+        transition: 'all var(--dur) var(--ease)',
+        boxShadow: hasData ? '0 0 14px rgba(200,255,0,0.18)' : 'none',
+        whiteSpace: 'nowrap',
       }}>
-        {recordCount > 0 ? `${recordCount.toLocaleString('sk')} záznamov` : 'Žiadne dáta'}
+        {hasData ? `${recordCount.toLocaleString('sk')} záznamov` : 'Žiadne dáta'}
       </div>
+
+      {/* Menu button */}
       <button
         onClick={onOpenMenu}
         title="Hlavné menu"
         style={{
-          background: 'transparent', border: '1px solid var(--border)',
-          color: 'var(--text2)', borderRadius: 8, cursor: 'pointer',
-          padding: '6px 12px', fontSize: 13, fontWeight: 500,
-          display: 'flex', alignItems: 'center', gap: 6,
-          transition: 'all .15s',
+          background: 'transparent',
+          border: '1px solid var(--border2)',
+          color: 'var(--text2)',
+          borderRadius: 10,
+          cursor: 'pointer',
+          padding: '7px 16px',
+          fontSize: 13, fontWeight: 500,
+          display: 'flex', alignItems: 'center', gap: 7,
+          transition: 'all var(--dur) var(--ease)',
+          fontFamily: 'var(--font-body)',
         }}
         onMouseEnter={e => {
-          e.currentTarget.style.borderColor = 'var(--accent)'
-          e.currentTarget.style.color = 'var(--accent)'
+          const el = e.currentTarget
+          el.style.borderColor = 'rgba(200,255,0,0.45)'
+          el.style.color = 'var(--accent)'
+          el.style.background = 'var(--accent-dim)'
+          el.style.boxShadow = '0 0 14px rgba(200,255,0,0.15)'
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.borderColor = 'var(--border)'
-          e.currentTarget.style.color = 'var(--text2)'
+          const el = e.currentTarget
+          el.style.borderColor = 'var(--border2)'
+          el.style.color = 'var(--text2)'
+          el.style.background = 'transparent'
+          el.style.boxShadow = 'none'
         }}
       >
         ☰ Menu

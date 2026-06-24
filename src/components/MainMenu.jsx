@@ -372,7 +372,7 @@ function AdminLogin({ pw, setPw, pwErr, onSubmit }) {
         <button
           type="submit"
           style={{
-            padding: '11px', background: 'var(--accent)', color: '#0d1117',
+            padding: '11px', background: 'var(--accent)', color: '#0A0A0F',
             border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 700, fontSize: 14,
           }}
         >
@@ -424,7 +424,7 @@ function AdminView({ events, onClear }) {
 
       {/* Info note */}
       <div style={{
-        background: 'rgba(88,166,255,.08)', border: '1px solid rgba(88,166,255,.2)',
+        background: 'rgba(200,255,0,0.06)', border: '1px solid rgba(200,255,0,0.18)',
         borderRadius: 8, padding: '10px 14px', fontSize: 12, color: 'var(--text2)', marginBottom: 16,
       }}>
         ℹ️ Dáta sú ukladané lokálne v prehliadači (localStorage) – zobrazujú aktivitu na tomto zariadení.
@@ -503,8 +503,8 @@ const closeStyle = {
 function tabBtn(active) {
   return {
     padding: '7px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
-    background: active ? 'rgba(88,166,255,.15)' : 'transparent',
-    border: `1px solid ${active ? 'rgba(88,166,255,.5)' : 'var(--border)'}`,
+    background: active ? 'var(--accent-dim)' : 'transparent',
+    border: `1px solid ${active ? 'rgba(200,255,0,0.45)' : 'var(--border)'}`,
     color: active ? 'var(--accent)' : 'var(--text2)',
     borderRadius: 8, transition: 'all .15s',
   }

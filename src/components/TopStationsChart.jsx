@@ -8,33 +8,49 @@ export default function TopStationsChart({ stStats, onSelect }) {
   useEffect(() => {
     if (!canvasRef.current) return
     chartRef.current?.destroy()
-    const top15 = [...stStats].sort((a,b)=>b.count-a.count).slice(0,15)
-    const labels = top15.map(s=>s.station)
-    const data   = top15.map(s=>s.count)
-    const colors = data.map((_,i)=>i===0?'#58a6ff':i<3?'#3fb950':'#8b949e')
+
+    const top15  = [...stStats].sort((a, b) => b.count - a.count).slice(0, 15)
+    const labels = top15.map(s => s.station)
+    const data   = top15.map(s => s.count)
+    const colors = data.map((_, i) =>
+      i === 0 ? '#C8FF00' :
+      i < 3   ? 'rgba(200,255,0,0.6)' :
+      i < 6   ? 'rgba(200,255,0,0.35)' :
+                'rgba(200,255,0,0.18)'
+    )
 
     chartRef.current = new Chart(canvasRef.current, {
-      type:'bar',
-      data:{labels,datasets:[{label:'Priechody',data,backgroundColor:colors,borderRadius:4}]},
-      options:{
-        indexAxis:'y', responsive:true, maintainAspectRatio:false,
-        plugins:{legend:{display:false},tooltip:{backgroundColor:'#1c2330',titleColor:'#e6edf3',bodyColor:'#8b949e',borderColor:'#30363d',borderWidth:1,callbacks:{footer:()=>'👆 Klikni pre detail'}}},
-        scales:{
-          x:{grid:{color:'rgba(48,54,61,.5)'},ticks:{color:'#6e7681',font:{size:11}}},
-          y:{grid:{display:false},ticks:{color:'#e6edf3',font:{size:11}}}
+      type: 'bar',
+      data: { labels, datasets: [{ label: 'Priechody', data, backgroundColor: colors, borderRadius: 5 }] },
+      options: {
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#1A1A24', titleColor: '#F0F0F5', bodyColor: '#6B6B80',
+            borderColor: 'rgba(255,255,255,0.08)', borderWidth: 1,
+            callbacks: { footer: () => '👆 Klikni pre detail' },
+          },
         },
-        onHover:(e,els)=>{e.native.target.style.cursor=els.length?'pointer':'default'},
-        onClick:(_,els)=>{ if(els.length) onSelect(labels[els[0].index]) }
-      }
+        scales: {
+          x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6B6B80', font: { size: 11 } } },
+          y: { grid: { display: false }, ticks: { color: '#F0F0F5', font: { size: 11 } } },
+        },
+        onHover: (e, els) => { e.native.target.style.cursor = els.length ? 'pointer' : 'default' },
+        onClick: (_, els) => { if (els.length) onSelect(labels[els[0].index]) },
+      },
     })
+
     return () => chartRef.current?.destroy()
   }, [stStats])
 
   return (
     <>
-      <div style={{fontSize:13,fontWeight:600,marginBottom:3}}>🏆 Top 15 staníc — počet priechodov</div>
-      <div style={{fontSize:11,color:'var(--text3)',marginBottom:12}}>Klikni na stanicu → detail hodín</div>
-      <div style={{height:340,position:'relative'}}><canvas ref={canvasRef}/></div>
+      <div style={{ fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 4 }}>
+        🏆 Top 15 staníc — priechody
+      </div>
+      <div style={{ fontSize: 11, color: 'var(--text2)', marginBottom: 14 }}>Klikni na stanicu → detail hodín</div>
+      <div style={{ height: 340, position: 'relative' }}><canvas ref={canvasRef} /></div>
     </>
   )
 }

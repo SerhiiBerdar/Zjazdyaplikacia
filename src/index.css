@@ -1,47 +1,200 @@
+/* ── Design tokens ─────────────────────────────────────────── */
 :root {
-  --bg: #0d1117;
-  --panel: #161b22;
-  --panel2: #1c2330;
-  --border: #30363d;
-  --accent: #58a6ff;
-  --accent2: #3fb950;
-  --accent3: #f78166;
-  --accent4: #d2a8ff;
-  --text: #e6edf3;
-  --text2: #8b949e;
-  --text3: #6e7681;
+  --bg:          #0A0A0F;
+  --surface:     #111118;
+  --surface2:    #1A1A24;
+  --border:      rgba(255,255,255,0.06);
+  --border2:     rgba(255,255,255,0.12);
+
+  /* Electric lime accent */
+  --accent:      #C8FF00;
+  --accent-dim:  rgba(200,255,0,0.12);
+  --accent-glow: rgba(200,255,0,0.28);
+
+  /* Semantic accents */
+  --accent2:     #22D3EE;   /* cyan  – secondary metrics  */
+  --accent3:     #FF4D6D;   /* red   – alerts / end point  */
+  --accent4:     #A78BFA;   /* purple – special values     */
+
+  --text:        #F0F0F5;
+  --text2:       #6B6B80;
+  --text3:       #3D3D52;
+
+  /* Backward-compat aliases used in inline styles */
+  --panel:       var(--surface);
+  --panel2:      var(--surface2);
+
+  /* Motion */
+  --ease:        cubic-bezier(0.4, 0, 0.2, 1);
+  --dur:         250ms;
+
+  /* Geometry */
+  --radius:      16px;
+  --radius-sm:   10px;
+
+  /* Display font */
+  --font-display: 'Barlow Condensed', system-ui, sans-serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── Reset ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── Base ───────────────────────────────────────────────────── */
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   min-height: 100vh;
   color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* Grain texture overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)' opacity='0.08'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9000;
+  opacity: 0.6;
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar              { width: 5px; height: 5px; }
+::-webkit-scrollbar-track        { background: var(--bg); }
+::-webkit-scrollbar-thumb        { background: rgba(255,255,255,0.08); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover  { background: rgba(255,255,255,0.16); }
+
+/* ── Cards ──────────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+}
+
+/* ── Buttons ────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent);
+  color: #0A0A0F;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 9px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: all var(--dur) var(--ease);
+}
+.btn:hover {
+  box-shadow: 0 0 24px var(--accent-glow);
+  transform: translateY(-1px);
+}
+.btn:active { transform: scale(0.97); }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: var(--text2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all var(--dur) var(--ease);
+}
+.btn-ghost:hover {
+  color: var(--text);
+  border-color: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.04);
+}
+.btn-ghost:active { transform: scale(0.97); }
+
+/* ── Pills ──────────────────────────────────────────────────── */
+.pill {
+  background: transparent;
+  color: var(--text2);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 4px 13px;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all var(--dur) var(--ease);
+  white-space: nowrap;
+}
+.pill:hover {
+  color: var(--text);
+  border-color: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.04);
+}
+.pill.active {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-color: rgba(200,255,0,0.4);
+  box-shadow: 0 0 14px rgba(200,255,0,0.18);
+}
+
+/* ── Inputs ─────────────────────────────────────────────────── */
 select, input[type=text], textarea {
   color-scheme: dark;
-  background: var(--bg);
+  background: var(--surface2);
   border: 1px solid var(--border);
-  border-radius: 7px;
+  border-radius: var(--radius-sm);
   color: var(--text);
-  font-size: 12px;
-  padding: 7px 10px;
-  font-family: inherit;
-  transition: border-color .2s;
+  font-size: 13px;
+  padding: 8px 12px;
+  font-family: var(--font-body);
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  outline: none;
 }
 select:focus, input[type=text]:focus, textarea:focus {
-  outline: none;
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(200,255,0,0.1);
 }
-select option { background: #1c2330; color: var(--text); }
+select option { background: #1A1A24; color: var(--text); }
 
-/* MZ SVG hover */
+/* ── Animations ─────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(200,255,0,0.2); }
+  50%       { box-shadow: 0 0 40px rgba(200,255,0,0.5); }
+}
+
+.fade-in-up   { animation: fadeInUp 0.45s var(--ease) both; }
+.delay-1      { animation-delay: 0.06s; }
+.delay-2      { animation-delay: 0.12s; }
+.delay-3      { animation-delay: 0.18s; }
+.delay-4      { animation-delay: 0.24s; }
+.delay-5      { animation-delay: 0.30s; }
+.delay-6      { animation-delay: 0.36s; }
+
+/* ── MZ SVG hover ───────────────────────────────────────────── */
 .mz-svg-wrap svg rect.mz-station:hover {
-  filter: brightness(1.5);
+  filter: brightness(1.6) drop-shadow(0 0 6px rgba(200,255,0,0.6));
   cursor: pointer;
 }
+
+/* ── Selection ──────────────────────────────────────────────── */
+::selection { background: rgba(200,255,0,0.25); color: var(--text); }

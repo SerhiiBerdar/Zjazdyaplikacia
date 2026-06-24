@@ -4,6 +4,15 @@ import { getSlots } from '../utils/parser'
 
 const RES_OPTIONS = [5, 15, 30, 60]
 
+const CHART_DEFAULTS = {
+  grid:    'rgba(255,255,255,0.04)',
+  tick:    '#6B6B80',
+  tipBg:   '#1A1A24',
+  tipTitle:'#F0F0F5',
+  tipBody: '#6B6B80',
+  tipBorder:'rgba(255,255,255,0.08)',
+}
+
 export default function TimelineChart({ data, resolution, onResChange, showDuplicates, onToggleDuplicates }) {
   const canvasRef = useRef(null)
   const chartRef  = useRef(null)
@@ -12,11 +21,10 @@ export default function TimelineChart({ data, resolution, onResChange, showDupli
     if (!canvasRef.current) return
     chartRef.current?.destroy()
 
-    const slots = getSlots(data, resolution)
-    const nPoints = slots.length
-    const pointRadius = nPoints > 120 ? 0 : 3
+    const slots    = getSlots(data, resolution)
+    const nPoints  = slots.length
+    const ptRadius = nPoints > 120 ? 0 : 3
 
-    // Build duplicate dataset: records where (barcode, station) appears more than once
     let dupSlots = null
     if (showDuplicates && data.length) {
       const pairCounts = {}
@@ -32,10 +40,11 @@ export default function TimelineChart({ data, resolution, onResChange, showDupli
       {
         label: 'Všetky priechody',
         data: slots.map(s => s[1]),
-        borderColor: '#58a6ff',
-        backgroundColor: 'rgba(88,166,255,.1)',
-        borderWidth: 2, fill: true, tension: 0.3,
-        pointRadius, pointHoverRadius: 5,
+        borderColor: '#C8FF00',
+        backgroundColor: 'rgba(200,255,0,0.07)',
+        borderWidth: 2, fill: true, tension: 0.35,
+        pointRadius: ptRadius, pointHoverRadius: 5,
+        pointBackgroundColor: '#C8FF00',
       },
     ]
 
@@ -43,11 +52,11 @@ export default function TimelineChart({ data, resolution, onResChange, showDupli
       datasets.push({
         label: 'Opakované (≥2× na stanici)',
         data: dupSlots.map(s => s[1]),
-        borderColor: '#f78166',
-        backgroundColor: 'rgba(247,129,102,.07)',
-        borderWidth: 2, fill: false, tension: 0.3,
-        pointRadius, pointHoverRadius: 5,
-        borderDash: [],
+        borderColor: '#FF4D6D',
+        backgroundColor: 'rgba(255,77,109,0.07)',
+        borderWidth: 2, fill: false, tension: 0.35,
+        pointRadius: ptRadius, pointHoverRadius: 5,
+        pointBackgroundColor: '#FF4D6D',
       })
     }
 
@@ -59,16 +68,19 @@ export default function TimelineChart({ data, resolution, onResChange, showDupli
         plugins: {
           legend: {
             display: !!dupSlots,
-            labels: { color: '#8b949e', font: { size: 12 }, boxWidth: 14, padding: 16 },
+            labels: { color: CHART_DEFAULTS.tick, font: { size: 12, family: 'DM Sans' }, boxWidth: 14, padding: 16 },
           },
           tooltip: {
-            backgroundColor: '#1c2330', titleColor: '#e6edf3',
-            bodyColor: '#8b949e', borderColor: '#30363d', borderWidth: 1,
+            backgroundColor: CHART_DEFAULTS.tipBg,
+            titleColor: CHART_DEFAULTS.tipTitle,
+            bodyColor: CHART_DEFAULTS.tipBody,
+            borderColor: CHART_DEFAULTS.tipBorder,
+            borderWidth: 1,
           },
         },
         scales: {
-          x: { grid: { color: 'rgba(48,54,61,.5)' }, ticks: { color: '#6e7681', font: { size: 11 }, maxTicksLimit: 24 } },
-          y: { grid: { color: 'rgba(48,54,61,.5)' }, ticks: { color: '#6e7681', font: { size: 11 } }, beginAtZero: true },
+          x: { grid: { color: CHART_DEFAULTS.grid }, ticks: { color: CHART_DEFAULTS.tick, font: { size: 11 }, maxTicksLimit: 24 } },
+          y: { grid: { color: CHART_DEFAULTS.grid }, ticks: { color: CHART_DEFAULTS.tick, font: { size: 11 } }, beginAtZero: true },
         },
       },
     })
@@ -78,29 +90,24 @@ export default function TimelineChart({ data, resolution, onResChange, showDupli
 
   return (
     <>
-      <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>📈 Počet priechodov v čase</div>
-      <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+      <div style={{ fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 10 }}>
+        📈 Počet priechodov v čase
+      </div>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 14, flexWrap: 'wrap', alignItems: 'center' }}>
         <span style={{ fontSize: 11, color: 'var(--text2)' }}>Rozlíšenie:</span>
         {RES_OPTIONS.map(r => (
           <button key={r} className={`pill${resolution === r ? ' active' : ''}`} onClick={() => onResChange(r)}>
             {r < 60 ? `${r} min` : '1 hod'}
           </button>
         ))}
-
-        <label style={{
-          marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 7,
-          cursor: 'pointer', fontSize: 12, userSelect: 'none',
-        }}>
+        <label style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer', fontSize: 12, userSelect: 'none' }}>
           <input
             type="checkbox"
             checked={showDuplicates}
             onChange={e => onToggleDuplicates(e.target.checked)}
-            style={{ accentColor: '#f78166', width: 14, height: 14, cursor: 'pointer' }}
+            style={{ accentColor: '#FF4D6D', width: 14, height: 14, cursor: 'pointer' }}
           />
-          <span style={{
-            color: showDuplicates ? '#f78166' : 'var(--text2)',
-            transition: 'color .15s',
-          }}>
+          <span style={{ color: showDuplicates ? '#FF4D6D' : 'var(--text2)', transition: 'color var(--dur) var(--ease)' }}>
             Opakované priechody (≥2× na stanici)
           </span>
         </label>

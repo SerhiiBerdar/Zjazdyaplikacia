@@ -4,10 +4,12 @@ import Header from './components/Header'
 import TabBar from './components/TabBar'
 import Dashboard from './components/Dashboard'
 import MZLayout from './components/MZLayout'
+import ExpLayout from './components/ExpLayout'
 
 const TABS = [
   { id: 'dashboard', label: '📊 Dashboard' },
   { id: 'mz',        label: '🏭 Manuálna zóna' },
+  { id: 'exp',       label: '📦 Expedičná časť' },
 ]
 
 export default function App() {
@@ -53,6 +55,9 @@ export default function App() {
       )}
       {tab === 'mz' && (
         <MZLayout allData={allData} stStats={stStats} />
+      )}
+      {tab === 'exp' && (
+        <ExpLayout allData={allData} stStats={stStats} />
       )}
     </>
   )

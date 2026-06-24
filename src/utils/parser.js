@@ -94,7 +94,6 @@ export function getSlots(data, resMin, filterStation) {
     return [String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'), buckets[sm]]
   })
 }
-
 export function chronoHours(data) {
   const used = [...new Set(data.map(d => d.hour))].sort((a,b) => a-b)
   if (!used.length) return []

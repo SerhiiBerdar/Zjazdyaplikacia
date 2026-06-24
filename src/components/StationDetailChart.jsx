@@ -15,8 +15,8 @@ export default function StationDetailChart({ allData, stStats, selected, onSelec
 
     const st = stStats.find(s=>s.station===currentStation)
     const slots = getSlots(allData, mode==='hour'?60:15, currentStation)
-    const labels = slots.map(s=>s.label)
-    const data   = slots.map(s=>s.value)
+    const labels = slots.map(s=>s[0])
+    const data   = slots.map(s=>s[1])
     const maxV   = Math.max(...data,1)
     const colors = data.map(v=>{const r=v/maxV;return r>.8?'#58a6ff':r>.5?'#3fb950':r>.25?'#d2a8ff':'#374151'})
 

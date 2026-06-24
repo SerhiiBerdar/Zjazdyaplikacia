@@ -74,10 +74,26 @@ export function buildFlowPairs(data) {
 
 export function getSlots(data, resMin, filterStation) {
   const src = filterStation ? data.filter(d => d.station === filterStation) : data
-  const buckets = {}
+
+  // Identify "double passes": the same barcode scanned more than once at the
+  // same station. Every occurrence after the first (chronologically) counts.
+  const groups = {}
+  src.forEach(d => {
+    const k = d.barcode + '|||' + d.station
+    ;(groups[k] || (groups[k] = [])).push(d)
+  })
+  const doubles = new Set()
+  Object.values(groups).forEach(g => {
+    if (g.length < 2) return
+    g.sort((a,b) => a.datetime - b.datetime)
+    for (let i = 1; i < g.length; i++) doubles.add(g[i])
+  })
+
+  const buckets = {}, dblBuckets = {}
   src.forEach(d => {
     const sm = Math.floor((d.hour * 60 + d.minute) / resMin) * resMin
     buckets[sm] = (buckets[sm] || 0) + 1
+    if (doubles.has(d)) dblBuckets[sm] = (dblBuckets[sm] || 0) + 1
   })
   const nums = Object.keys(buckets).map(Number).sort((a,b) => a-b)
   if (!nums.length) return []
@@ -91,7 +107,11 @@ export function getSlots(data, resMin, filterStation) {
     : nums
   return ordered.map(sm => {
     const h = Math.floor(sm/60) % 24, m = sm % 60
-    return [String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'), buckets[sm]]
+    return {
+      label: String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),
+      value: buckets[sm],
+      doubles: dblBuckets[sm] || 0,
+    }
   })
 }
 export function chronoHours(data) {

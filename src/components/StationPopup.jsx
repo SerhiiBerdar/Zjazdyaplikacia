@@ -14,8 +14,8 @@ export default function StationPopup({ station, type, allData, stStats, onClose 
     if (chartInst.current) { chartInst.current.destroy(); chartInst.current = null }
 
     const slots = getSlots(allData, 60, station)
-    const labels = slots.map(s => s[0])
-    const data = slots.map(s => s[1])
+    const labels = slots.map(s => s.label)
+    const data = slots.map(s => s.value)
     const maxV = Math.max(...data, 1)
     const colors = data.map(v => {
       const r = v/maxV

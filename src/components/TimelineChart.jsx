@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Chart } from 'chart.js/auto'
 import { getSlots } from '../utils/parser'
 
@@ -7,23 +7,29 @@ const RES_OPTIONS = [5,15,30,60]
 export default function TimelineChart({ data, resolution, onResChange }) {
   const canvasRef = useRef(null)
   const chartRef  = useRef(null)
+  const [showDoubles, setShowDoubles] = useState(false)
 
   useEffect(() => {
     if (!canvasRef.current) return
     chartRef.current?.destroy()
     const slots = getSlots(data, resolution)
+    const datasets = [{ label:'Priechody', data:slots.map(s=>s.value),
+      borderColor:'#58a6ff', backgroundColor:'rgba(88,166,255,.1)',
+      borderWidth:2, fill:true, tension:0.3,
+      pointRadius:slots.length>120?0:3, pointHoverRadius:5 }]
+    if (showDoubles) datasets.push({ label:'Dvojité prejazdy', data:slots.map(s=>s.doubles),
+      borderColor:'#f85149', backgroundColor:'rgba(248,81,73,.1)',
+      borderWidth:2, fill:true, tension:0.3,
+      pointRadius:slots.length>120?0:3, pointHoverRadius:5 })
     chartRef.current = new Chart(canvasRef.current, {
       type: 'line',
       data: {
         labels: slots.map(s=>s.label),
-        datasets: [{ label:'Priechody', data:slots.map(s=>s.value),
-          borderColor:'#58a6ff', backgroundColor:'rgba(88,166,255,.1)',
-          borderWidth:2, fill:true, tension:0.3,
-          pointRadius:slots.length>120?0:3, pointHoverRadius:5 }]
+        datasets
       },
       options: {
         responsive:true, maintainAspectRatio:false,
-        plugins:{legend:{display:false},tooltip:{backgroundColor:'#1c2330',titleColor:'#e6edf3',bodyColor:'#8b949e',borderColor:'#30363d',borderWidth:1}},
+        plugins:{legend:{display:showDoubles,labels:{color:'#8b949e',font:{size:11},boxWidth:12}},tooltip:{backgroundColor:'#1c2330',titleColor:'#e6edf3',bodyColor:'#8b949e',borderColor:'#30363d',borderWidth:1}},
         scales:{
           x:{grid:{color:'rgba(48,54,61,.5)'},ticks:{color:'#6e7681',font:{size:11},maxTicksLimit:24}},
           y:{grid:{color:'rgba(48,54,61,.5)'},ticks:{color:'#6e7681',font:{size:11}},beginAtZero:true}
@@ -31,7 +37,7 @@ export default function TimelineChart({ data, resolution, onResChange }) {
       }
     })
     return () => chartRef.current?.destroy()
-  }, [data, resolution])
+  }, [data, resolution, showDoubles])
 
   return (
     <>
@@ -43,6 +49,10 @@ export default function TimelineChart({ data, resolution, onResChange }) {
             {r<60?`${r} min`:'1 hod'}
           </button>
         ))}
+        <label style={{display:'flex',alignItems:'center',gap:6,fontSize:11,color:'var(--text2)',cursor:'pointer',marginLeft:'auto'}}>
+          <input type="checkbox" checked={showDoubles} onChange={e=>setShowDoubles(e.target.checked)} style={{cursor:'pointer'}}/>
+          Dvojité prejazdy
+        </label>
       </div>
       <div style={{height:320,position:'relative'}}><canvas ref={canvasRef}/></div>
     </>

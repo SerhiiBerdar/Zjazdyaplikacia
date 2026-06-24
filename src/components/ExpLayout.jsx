@@ -82,6 +82,7 @@ export default function ExpLayout({ allData, stStats }) {
   // heatmap colouring
   useEffect(() => {
     if (!svgRef.current || !svgContent) return
+    const hasData = stStats.length > 0
     const maxCount = Math.max(...EXP_NODES.map(n => {
       const st = stStats.find(s => s.station.toUpperCase() === n.id.toUpperCase())
       return st?.count ?? 0
@@ -93,10 +94,17 @@ export default function ExpLayout({ allData, stStats }) {
       const ratio = (st?.count ?? 0) / maxCount
       const fill = heatFill(ratio, n.type)
       if (fill) {
+        // má dáta → svieti podľa vyťaženosti
         el.setAttribute('fill', fill)
         el.setAttribute('stroke-width', '2.5')
         el.setAttribute('stroke', n.type==='D' ? 'rgba(255,150,100,.9)' : n.type==='X' ? 'rgba(190,120,255,.9)' : 'rgba(100,240,140,.85)')
+      } else if (hasData) {
+        // dáta načítané, ale táto stanica nemá žiadne priechody → stlmená
+        el.setAttribute('fill', 'rgba(255,255,255,.05)')
+        el.setAttribute('stroke', 'rgba(255,255,255,.15)')
+        el.setAttribute('stroke-width', '1')
       } else {
+        // pred načítaním dát → ponechaj pôvodné farby layoutu
         el.setAttribute('stroke', 'rgba(255,255,255,.12)')
         el.setAttribute('stroke-width', '1')
       }

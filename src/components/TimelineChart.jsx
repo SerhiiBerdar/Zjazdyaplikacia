@@ -15,8 +15,8 @@ export default function TimelineChart({ data, resolution, onResChange }) {
     chartRef.current = new Chart(canvasRef.current, {
       type: 'line',
       data: {
-        labels: slots.map(s=>s.label),
-        datasets: [{ label:'Priechody', data:slots.map(s=>s.value),
+        labels: slots.map(s=>s[0]),
+        datasets: [{ label:'Priechody', data:slots.map(s=>s[1]),
           borderColor:'#58a6ff', backgroundColor:'rgba(88,166,255,.1)',
           borderWidth:2, fill:true, tension:0.3,
           pointRadius:slots.length>120?0:3, pointHoverRadius:5 }]

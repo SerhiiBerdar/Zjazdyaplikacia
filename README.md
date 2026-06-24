@@ -21,3 +21,4 @@ npm run dev
 2. Skopíruj `Ctrl+C`
 3. Vlož do poľa v záložke Dashboard `Ctrl+V`
 4. Klikni **▶ Analyzovať*
+5. Záložka **Manuálna zóna** zobrazuje interaktívny layout SPO loop.

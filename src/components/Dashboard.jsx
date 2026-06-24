@@ -13,7 +13,8 @@ import { chronoHours } from '../utils/parser'
 export default function Dashboard({ allData, stStats, flowData, parseStatus, onParse, onClear }) {
   const [pasteText, setPasteText]   = useState('')
   const [filters, setFilters]       = useState({ barcode:'', station:'', hour:'' })
-  const [timelineRes, setTimelineRes] = useState(15)
+  const [timelineRes, setTimelineRes]           = useState(15)
+  const [timelineDuplicates, setTimelineDuplicates] = useState(false)
   const [stationMode, setStationMode] = useState('hour')
   const [selectedStation, setSelectedStation] = useState('')
   const [heatN, setHeatN]           = useState(25)
@@ -84,7 +85,13 @@ export default function Dashboard({ allData, stStats, flowData, parseStatus, onP
         {/* Charts */}
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
           <div className="card" style={{padding:18,gridColumn:'1/-1'}}>
-            <TimelineChart data={filtered} resolution={timelineRes} onResChange={setTimelineRes}/>
+            <TimelineChart
+              data={filtered}
+              resolution={timelineRes}
+              onResChange={setTimelineRes}
+              showDuplicates={timelineDuplicates}
+              onToggleDuplicates={setTimelineDuplicates}
+            />
           </div>
           <div className="card" style={{padding:18}}>
             <TopStationsChart stStats={filteredStats} onSelect={st=>{setSelectedStation(st);setFilters(f=>({...f,station:st}))}}/>

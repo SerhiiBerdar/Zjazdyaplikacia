@@ -94,3 +94,15 @@ export function getSlots(data, resMin, filterStation) {
     return [String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'), buckets[sm]]
   })
 }
+
+export function chronoHours(data) {
+  const used = [...new Set(data.map(d => d.hour))].sort((a,b) => a-b)
+  if (!used.length) return []
+  let maxGap = 0, splitAt = used[0]
+  for (let i = 0; i < used.length-1; i++) {
+    const g = used[i+1] - used[i]
+    if (g > maxGap) { maxGap = g; splitAt = used[i+1] }
+  }
+  if (maxGap > 3) return [...used.filter(h => h >= splitAt), ...used.filter(h => h < splitAt)]
+  return used
+}
